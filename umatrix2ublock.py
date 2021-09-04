@@ -19,7 +19,7 @@ translate_request = {
     "image": "{request}",
     "script": "{prefix}-{request}",
     "frame": "{prefix}-{request}",
-    "xhr": "inline-script",
+    "xhr": "xhr",
 }
 
 translate_action = {"allow": "noop", "inherit": "noop", "block": "block"}
