@@ -19,7 +19,7 @@ translate_request = {
     "image": "{request}",
     "script": "{prefix}-{request}",
     "frame": "{prefix}-{request}",
-    "xhr": "xhr",
+    "xhr": "inline-script",
 }
 
 translate_action = {"allow": "noop", "inherit": "noop", "block": "block"}
@@ -29,11 +29,21 @@ skip_requests = ("cookie", "css", "plugin", "media", "other")
 
 skip_rules = (
     "* * * block",
-    "* * image allow",
-    "* 1st-party * allow",
 )
 
 ub_rules = []
+
+ub_rules.append(
+"""
+no-large-media: * true
+no-scripting: * true
+* * 1p-script block
+* * 1p-script block
+* * 3p-script block
+* * inline-script block
+"""
+)
+
 for rule in rules:
     rule = rule.rstrip("\n")
 
@@ -55,13 +65,17 @@ for rule in rules:
         if dest == "*" or src == dest:
             # First party or third party
             prefix = "1p" if src == dest else "3p"
+            dest = "*"
 
             ub_request = translate_request[request].format(
                 prefix=prefix, request=request
             )
-            
+
             if ub_request == "1p-script":
                 ub_rules.append(f"{src} {dest} inline-script {ub_action}\n")
+                ub_rules.append(f"{src} {dest} xmlhttprequest {ub_action}\n")
+            if src != "*" and ub_action == "noop":
+                ub_rules.append(f"no-scripting: {src} false\n")
         else:
             ub_request = "*"
 
