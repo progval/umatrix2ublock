@@ -50,6 +50,8 @@ for rule in rules:
             print("Skipping req:".rjust(15), rule)
             continue
 
+        ub_action = translate_action[action]
+
         if dest == "*" or src == dest:
             # First party or third party
             prefix = "1p" if src == dest else "3p"
@@ -57,10 +59,11 @@ for rule in rules:
             ub_request = translate_request[request].format(
                 prefix=prefix, request=request
             )
+            
+            if ub_request == "1p-script":
+                ub_rules.append(f"{src} {dest} inline-script {ub_action}\n")
         else:
             ub_request = "*"
-
-        ub_action = translate_action[action]
 
         ub_rule = f"{src} {dest} {ub_request} {ub_action}"
         print("Adding:".rjust(15), ub_rule)
