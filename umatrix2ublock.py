@@ -13,7 +13,7 @@ with open(UMATRIX) as fp:
 
 
 # Dictionaries which translate the rule
-# NOTE: Only translated when destination is "*"
+# NOTE: Only translated when destination is "*" or src is the same as dest
 translate_request = {
     "*": "{request}",
     "image": "{request}",
@@ -50,7 +50,7 @@ for rule in rules:
             print("Skipping req:".rjust(15), rule)
             continue
 
-        if dest == "*":
+        if dest == "*" or src == dest:
             # First party or third party
             prefix = "1p" if src == dest else "3p"
 
